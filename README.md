@@ -11,14 +11,18 @@ weather-app/
 │   ├── style.css      # 화면 디자인 / 모바일 대응
 │   └── app.js         # 검색 요청 / 결과 표시
 ├── backend/           # 서버에서 실행
-│   └── server.js      # 프론트엔드 제공 / 외부 API 호출
+│   ├── server.js      # 로컬 프론트엔드 제공 / API 라우팅
+│   └── weather.js     # 로컬·Vercel 공통 날씨 조회 로직
+├── api/
+│   └── weather.js     # Vercel 서버 함수 진입점
+├── vercel.json        # Vercel 배포 설정
 ├── package.json
 └── README.md
 ```
 
 ## 실행 방법
 
-1. [Node.js](https://nodejs.org/) 22 이상을 설치합니다.
+1. [Node.js](https://nodejs.org/) 22 이상을 설치합니다. Vercel에서는 Node.js 22.x를 사용합니다.
 2. 터미널에서 이 `weather-app` 폴더를 엽니다. VS Code에서는 폴더를 연 뒤 **터미널 → 새 터미널**을 선택하면 됩니다.
 3. 설치 여부를 확인합니다.
 
@@ -57,6 +61,16 @@ node backend/server.js
 주요 한국어 도시명은 영문 검색어로 변환합니다. 검색이 안 되는 도시는 영문 이름으로 시도하세요. 동명 도시는 API의 첫 번째 검색 결과를 사용하므로 표시된 국가와 지역을 확인하세요.
 
 빈 입력, 잘못된 도시, API 오류, 요청 시간 초과 시 안내 메시지를 표시합니다. 백엔드는 프로젝트 내 지정된 프론트엔드 파일만 제공합니다.
+
+## Vercel 배포
+
+1. Vercel에서 이 GitHub 저장소를 Import합니다.
+2. Framework Preset은 **Other**, Root Directory는 저장소 루트로 둡니다. `frontend`를 Root Directory로 지정하면 서버 함수를 찾지 못합니다.
+3. `vercel.json`이 프론트엔드 출력 폴더를 `frontend`로 지정합니다. Build Command를 `npm start`로 지정하지 마세요. 별도의 빌드 작업은 없습니다.
+4. Deploy를 누릅니다. 환경 변수나 API 키를 설정할 필요가 없습니다.
+5. 기존 프로젝트라면 GitHub의 `main` 브랜치에 변경 사항을 푸시할 때 자동으로 다시 배포됩니다. 자동 배포가 꺼져 있으면 최신 커밋으로 새 배포를 생성하세요.
+
+Vercel은 `frontend` 파일을 정적 페이지로 제공하고, `/api/weather` 요청을 `api/weather.js` 서버 함수에서 실행합니다. 서버 함수는 `backend/weather.js`의 공통 로직을 사용합니다. 로컬에서는 기존과 동일하게 `node backend/server.js`로 실행합니다.
 
 ## 데이터 제공
 
